@@ -1,10 +1,10 @@
 import './bootstrap';
 import { createApp } from 'vue';
 
-import ExampleComponent from './components/ExampleComponent.vue';
+import Article from './components/Article.vue';
 
 const app = createApp({
     components: {
-        'example-component': ExampleComponent
+        'article-component': Article,
     }
 }).mount('#app');
