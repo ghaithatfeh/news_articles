@@ -25,11 +25,12 @@
                 <div class="modal-body">
                     <ImagesSelector
                         :dataImages="dataImages"
-                        @selectImage="getSelectedImages"
+                        @toggleImage="getSelectedImages"
                     />
                 </div>
                 <div class="modal-footer">
                     <button
+                        id="close-btn"
                         type="button"
                         class="btn btn-secondary"
                         data-bs-dismiss="modal"
@@ -37,7 +38,7 @@
                         Close
                     </button>
                     <button
-                        id="save-image"
+                        id="insert-btn"
                         type="button"
                         class="btn btn-primary"
                         @click="insert"
@@ -56,6 +57,7 @@ import { Modal } from "bootstrap";
 import ImagesSelector from "./ImagesSelector.vue";
 
 let selectedImages = null;
+
 class Gif {
     static get toolbox() {
         return {
@@ -66,33 +68,47 @@ class Gif {
 
     constructor({ data }) {
         this.data = data;
+        this.wrapper = undefined;
+        this.modal = undefined;
     }
 
     render() {
-        const modal = new Modal("#modal");
-        modal.show();
-        
-        console.log(selectedImages);
-        return insert();
+        this.wrapper = document.createElement("div");
+        this.wrapper.classList.add("gifs-wrapper");
+        this.modal = new Modal("#modal");
+
+        if (this.data.length) {
+            selectedImages = this.data;
+            this.insertGifs();
+            return this.wrapper;
+        }
+
+        this.modal.show();
+        document.getElementById("insert-btn").onclick = () => {
+            this.insertGifs();
+        };
+        return this.wrapper;
     }
 
-    insert() {
-        const wrapper = document.createElement("div");
+    insertGifs() {
         selectedImages &&
             selectedImages.forEach((image) => {
                 const img = document.createElement("img");
                 img.src = image.src;
-                wrapper.appendChild(img);
+                this.wrapper.appendChild(img);
             });
-        return wrapper;
-    }
-
-    _createImage(url) {
-        return;
+        selectedImages = null;
+        this.modal.hide();
     }
 
     save(blockContent) {
-        return;
+        let data = [];
+        blockContent.querySelectorAll("img").forEach((img) => {
+            data.push(img.src);
+        });
+        return {
+            url: data,
+        };
     }
 }
 
@@ -102,6 +118,19 @@ export default {
         getSelectedImages(images) {
             selectedImages = images;
         },
+        insert() {
+            this.dataImages.map((i) => (i.selected = false));
+        },
+        save() {
+            this.editor
+                .save()
+                .then((outputData) => {
+                    console.log("Article data: ", outputData.blocks[0]);
+                })
+                .catch((error) => {
+                    console.log("Saving failed: ", error);
+                });
+        },
     },
     data() {
         return {
@@ -110,6 +139,36 @@ export default {
                     gif: {
                         class: Gif,
                     },
+                },
+                data: {
+                    time: 1552744582955,
+                    blocks: [
+                        {
+                            type: "gif",
+                            data: [
+                                {
+                                    id: "1",
+                                    src: "https://unsplash.it/200?1",
+                                    alt: "Alt Image 1",
+                                },
+                                {
+                                    id: "1",
+                                    src: "https://unsplash.it/200?3",
+                                    alt: "Alt Image 1",
+                                },
+                            ],
+                        },
+                        {
+                            type: "gif",
+                            data: [
+                                {
+                                    src: "https://unsplash.it/200?2",
+                                    alt: "Alt Image 1",
+                                },
+                            ],
+                        },
+                    ],
+                    version: "2.11.10",
                 },
             }),
             dataImages: [
@@ -136,18 +195,6 @@ export default {
             ],
         };
     },
-    // methods: {
-    //     save() {
-    //         this.editor
-    //             .save()
-    //             .then((outputData) => {
-    //                 console.log("Article data: ", outputData);
-    //             })
-    //             .catch((error) => {
-    //                 console.log("Saving failed: ", error);
-    //             });
-    //     },
-    // },
 };
 </script>
 
