@@ -55,6 +55,7 @@
 import EditorJS from "@editorjs/editorjs";
 import { Modal } from "bootstrap";
 import ImagesSelector from "./ImagesSelector.vue";
+import axios from "axios";
 
 let selectedImages = null;
 
@@ -94,7 +95,7 @@ class Gif {
         selectedImages &&
             selectedImages.forEach((image) => {
                 const img = document.createElement("img");
-                img.src = image.src;
+                img.src = image.gif_url;
                 this.wrapper.appendChild(img);
             });
         selectedImages = null;
@@ -104,10 +105,10 @@ class Gif {
     save(blockContent) {
         let data = [];
         blockContent.querySelectorAll("img").forEach((img) => {
-            data.push(img.src);
+            data.push(img.gif_url);
         });
         return {
-            url: data,
+            urls: data,
         };
     }
 }
@@ -125,12 +126,17 @@ export default {
             this.editor
                 .save()
                 .then((outputData) => {
-                    console.log("Article data: ", outputData.blocks[0]);
+                    console.log("Article data: ", outputData);
                 })
                 .catch((error) => {
                     console.log("Saving failed: ", error);
                 });
         },
+    },
+    mounted() {
+        axios.get("http://localhost:3000/api/gifs").then((res) => {
+            this.dataImages = res.data;
+        });
     },
     data() {
         return {
@@ -147,14 +153,10 @@ export default {
                             type: "gif",
                             data: [
                                 {
-                                    id: "1",
-                                    src: "https://unsplash.it/200?1",
-                                    alt: "Alt Image 1",
+                                    gif_url: "https://unsplash.it/200?1",
                                 },
                                 {
-                                    id: "1",
-                                    src: "https://unsplash.it/200?3",
-                                    alt: "Alt Image 1",
+                                    gif_url: "https://unsplash.it/200?3",
                                 },
                             ],
                         },
@@ -162,8 +164,7 @@ export default {
                             type: "gif",
                             data: [
                                 {
-                                    src: "https://unsplash.it/200?2",
-                                    alt: "Alt Image 1",
+                                    gif_url: "https://unsplash.it/200?2",
                                 },
                             ],
                         },
@@ -173,24 +174,9 @@ export default {
             }),
             dataImages: [
                 {
-                    id: "1",
-                    src: "https://unsplash.it/200?1",
-                    alt: "Alt Image 1",
-                },
-                {
-                    id: "2",
-                    src: "https://unsplash.it/200?2",
-                    alt: "Alt Image 2",
-                },
-                {
-                    id: "3",
-                    src: "https://unsplash.it/200?3",
-                    alt: "Alt Image 2",
-                },
-                {
-                    id: "4",
-                    src: "https://unsplash.it/200?4",
-                    alt: "Alt Image 2",
+                    id: 1,
+                    tinygif_url: "https://unsplash.it/200?1",
+                    gif_url: "https://unsplash.it/200?1",
                 },
             ],
         };

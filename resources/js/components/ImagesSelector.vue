@@ -2,8 +2,9 @@
     <div class="row">
         <div class="col-3" v-for="image in dataImages" :key="image.id">
             <img
+                style="cursor: pointer"
                 class="img-fluid"
-                :src="image.src"
+                :src="image.tinygif_url"
                 @click="toggleImage(image)"
                 :class="{ 'border border-primary border-5': image.selected }"
             />
