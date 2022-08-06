@@ -22,7 +22,13 @@ app.get('/api/gifs', (request, response) => {
             }
         })
         .then(res => {
-            let gifs = res.data
+            let gifs = res.data.results.map(item => {
+                return {
+                    id: 1,
+                    tinygif_url: item.tinygif.url,
+                    gif_url: item.gif.url,
+                }
+            })
             response.send(gifs)
         })
         .catch(error => {
