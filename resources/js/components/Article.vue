@@ -32,6 +32,11 @@
                         />
                         <button class="btn btn-primary" style="border-radius: 0 5px 5px 0;">Search</button>
                     </form>
+
+                    <div v-if="loading" class="d-flex my-5">
+                        <img class="w-25 mx-auto" src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif" alt="">
+                    </div>
+
                     <ImagesSelector
                         :dataImages="dataImages"
                         @toggleImage="getSelectedImages"
@@ -142,12 +147,15 @@ export default {
                 });
         },
         getData(query = "") {
+            this.loading = true;
+            this.dataImages = [];
             axios
-                .get("http://localhost:3000/api/gifs/search", {
+                .get("http://localhost:3000/api/gifs", {
                     params: { q: query },
                 })
                 .then((res) => {
                     this.dataImages = res.data;
+                    this.loading = false;
                 });
         },
     },
@@ -156,6 +164,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             searchText: "",
             editor: new EditorJS({
                 tools: {
@@ -211,5 +220,15 @@ export default {
 
 .ce-block:only-child .ce-block__content {
     border-radius: 10px;
+}
+
+.gifs-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.gifs-wrapper img{
+    border-radius: 8px;
+    margin: .5rem;
 }
 </style>
