@@ -1,9 +1,10 @@
 <template>
     <div class="row">
-        <div class="col-3" v-for="image in dataImages" :key="image.id">
+        <div class="col-3 p-1" v-for="image in dataImages" :key="image.id">
             <img
+                loading="lazy"
                 style="cursor: pointer"
-                class="img-fluid"
+                class="img-fluid rounded"
                 :src="image.tinygif_url"
                 @click="toggleImage(image)"
                 :class="{ 'border border-primary border-5': image.selected }"

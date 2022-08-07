@@ -23,6 +23,15 @@
                     ></button>
                 </div>
                 <div class="modal-body">
+                    <form class="d-flex align-items-start" @submit.prevent="getData(searchText)">
+                        <input
+                            v-model="searchText"
+                            class="form-control mb-3 border-righ"
+                            placeholder="Search for GIF"
+                            style="border-radius: 5px 0 0 5px;"
+                        />
+                        <button class="btn btn-primary" style="border-radius: 0 5px 5px 0;">Search</button>
+                    </form>
                     <ImagesSelector
                         :dataImages="dataImages"
                         @toggleImage="getSelectedImages"
@@ -132,14 +141,22 @@ export default {
                     console.log("Saving failed: ", error);
                 });
         },
+        getData(query = "") {
+            axios
+                .get("http://localhost:3000/api/gifs/search", {
+                    params: { q: query },
+                })
+                .then((res) => {
+                    this.dataImages = res.data;
+                });
+        },
     },
     mounted() {
-        axios.get("http://localhost:3000/api/gifs").then((res) => {
-            this.dataImages = res.data;
-        });
+        this.getData();
     },
     data() {
         return {
+            searchText: "",
             editor: new EditorJS({
                 tools: {
                     gif: {
@@ -172,13 +189,7 @@ export default {
                     version: "2.11.10",
                 },
             }),
-            dataImages: [
-                {
-                    id: 1,
-                    tinygif_url: "https://unsplash.it/200?1",
-                    gif_url: "https://unsplash.it/200?1",
-                },
-            ],
+            dataImages: [],
         };
     },
 };
