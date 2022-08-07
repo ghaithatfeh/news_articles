@@ -1,11 +1,18 @@
 <template>
     <div class="container">
+        <input
+            type="text"
+            v-model="title"
+            placeholder="Article Title"
+            class="form-control mx-auto my-3"
+            style="font-size: 1.2rem; max-width: 650px"
+        />
         <div id="editorjs"></div>
-    </div>
-    <div class="d-flex">
-        <button class="btn btn-success mx-auto" @click="save">
-            Save Article
-        </button>
+        <div class="d-flex my-4">
+            <button class="btn btn-success mx-auto" @click="save">
+                Save Article
+            </button>
+        </div>
     </div>
 
     <div id="modal" class="modal" tabindex="-1" aria-modal="true" role="dialog">
@@ -23,18 +30,30 @@
                     ></button>
                 </div>
                 <div class="modal-body">
-                    <form class="d-flex align-items-start" @submit.prevent="getData(searchText)">
+                    <form
+                        class="d-flex align-items-start"
+                        @submit.prevent="getData(searchText)"
+                    >
                         <input
                             v-model="searchText"
                             class="form-control mb-3 border-righ"
                             placeholder="Search for GIF"
-                            style="border-radius: 5px 0 0 5px;"
+                            style="border-radius: 5px 0 0 5px"
                         />
-                        <button class="btn btn-primary" style="border-radius: 0 5px 5px 0;">Search</button>
+                        <button
+                            class="btn btn-primary"
+                            style="border-radius: 0 5px 5px 0"
+                        >
+                            Search
+                        </button>
                     </form>
 
                     <div v-if="loading" class="d-flex my-5">
-                        <img class="w-25 mx-auto" src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif" alt="">
+                        <img
+                            class="w-25 mx-auto"
+                            src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"
+                            alt=""
+                        />
                     </div>
 
                     <ImagesSelector
@@ -44,7 +63,6 @@
                 </div>
                 <div class="modal-footer">
                     <button
-                        id="close-btn"
                         type="button"
                         class="btn btn-secondary"
                         data-bs-dismiss="modal"
@@ -81,7 +99,8 @@ class Gif {
         };
     }
 
-    constructor({ data }) {
+    constructor({ data, api }) {
+        this.api = api;
         this.data = data;
         this.wrapper = undefined;
         this.modal = undefined;
@@ -119,17 +138,39 @@ class Gif {
     save(blockContent) {
         let data = [];
         blockContent.querySelectorAll("img").forEach((img) => {
-            data.push(img.gif_url);
+            data.push(img.src);
         });
         return {
             urls: data,
         };
+    }
+
+    validate(savedData) {
+        if (savedData.urls.length) {
+            return true;
+        }
+        return false;
     }
 }
 
 export default {
     components: { ImagesSelector },
     methods: {
+        async getData(query = "") {
+            this.loading = true;
+            this.dataImages = [];
+            axios
+                .get("http://localhost:3000/api/gifs", {
+                    params: { q: query },
+                })
+                .then((res) => {
+                    this.dataImages = res.data;
+                    this.loading = false;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
         getSelectedImages(images) {
             selectedImages = images;
         },
@@ -140,22 +181,16 @@ export default {
             this.editor
                 .save()
                 .then((outputData) => {
-                    console.log("Article data: ", outputData);
+                    axios
+                        .post("/article", {
+                            title: this.title,
+                            blocks: outputData.blocks,
+                        })
+                        .then((res) => console.log(res.data))
+                        .catch((error) => console.log(error.response.data));
                 })
                 .catch((error) => {
-                    console.log("Saving failed: ", error);
-                });
-        },
-        getData(query = "") {
-            this.loading = true;
-            this.dataImages = [];
-            axios
-                .get("http://localhost:3000/api/gifs", {
-                    params: { q: query },
-                })
-                .then((res) => {
-                    this.dataImages = res.data;
-                    this.loading = false;
+                    console.log("Saving failed: ", error.message);
                 });
         },
     },
@@ -164,41 +199,44 @@ export default {
     },
     data() {
         return {
-            loading: false,
+            title: "",
+            savedData: "",
             searchText: "",
+            dataImages: [],
+            loading: false,
+
             editor: new EditorJS({
                 tools: {
                     gif: {
                         class: Gif,
                     },
                 },
-                data: {
-                    time: 1552744582955,
-                    blocks: [
-                        {
-                            type: "gif",
-                            data: [
-                                {
-                                    gif_url: "https://unsplash.it/200?1",
-                                },
-                                {
-                                    gif_url: "https://unsplash.it/200?3",
-                                },
-                            ],
-                        },
-                        {
-                            type: "gif",
-                            data: [
-                                {
-                                    gif_url: "https://unsplash.it/200?2",
-                                },
-                            ],
-                        },
-                    ],
-                    version: "2.11.10",
-                },
+                // data: {
+                //     time: 1552744582955,
+                //     blocks: [
+                //         {
+                //             type: "gif",
+                //             data: [
+                //                 {
+                //                     gif_url: "https://unsplash.it/200?1",
+                //                 },
+                //                 {
+                //                     gif_url: "https://unsplash.it/200?3",
+                //                 },
+                //             ],
+                //         },
+                //         {
+                //             type: "gif",
+                //             data: [
+                //                 {
+                //                     gif_url: "https://unsplash.it/200?2",
+                //                 },
+                //             ],
+                //         },
+                //     ],
+                //     version: "2.11.10",
+                // },
             }),
-            dataImages: [],
         };
     },
 };
@@ -211,24 +249,29 @@ export default {
 }
 
 .ce-block:last-child .ce-block__content {
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 8px 8px;
 }
 
 .ce-block:first-child .ce-block__content {
-    border-radius: 10px 10px 0 0;
+    border-radius: 8px 8px 0 0;
 }
 
 .ce-block:only-child .ce-block__content {
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
-.gifs-wrapper{
+.gifs-wrapper {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
-.gifs-wrapper img{
+.gifs-wrapper img {
     border-radius: 8px;
-    margin: .5rem;
+    margin: 0.5rem;
+    max-width: 100%;
+}
+#editorjs,
+#editorjs > div > div {
+    padding-bottom: 0 !important;
 }
 </style>

@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('blocks', function (Blueprint $table) {
+        Schema::create('gifs', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['paragraph', 'gif']);
-            $table->text('value')->nullable();
-            $table->foreignId('article_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
+            $table->text('url');
+            $table->foreignId('block_id');
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('blocks');
+        Schema::dropIfExists('gifs');
     }
 };

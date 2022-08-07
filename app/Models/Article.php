@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Article extends Model
 {
     use HasFactory;
+    protected $fillable = ['title', 'slug', 'user_id'];
+
+    public function blocks()
+    {
+        return $this->hasMany(Block::class);
+    }
 }

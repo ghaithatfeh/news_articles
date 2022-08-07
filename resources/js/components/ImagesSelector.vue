@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-3 p-1" v-for="image in dataImages" :key="image.id">
+        <div class="col-4 col-md-3 p-1" v-for="image in dataImages" :key="image.id">
             <img
                 loading="lazy"
                 style="cursor: pointer"
