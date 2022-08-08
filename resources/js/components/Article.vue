@@ -186,16 +186,17 @@ export default {
                 .then((outputData) => {
                     axios
                         .post("/article", {
+                            _token: document.getElementById('csrf-token').content,
                             title: this.title,
                             blocks: outputData.blocks,
                         })
                         .then((res) => {
                             this.toastData.success = true;
-                            this.toastData.text =
-                                "Article has been created successfuly.";
+                            this.toastData.text = "Article has been created successfuly.";
                             toast.show();
                         })
                         .catch((error) => {
+                            console.log(error);
                             this.toastData.success = false;
                             this.toastData.text = error.response.data.message;
                             toast.show();
@@ -211,7 +212,7 @@ export default {
             title: "",
             savedData: "",
             searchText: "",
-            toastData: { success: false, text: "" },
+            toastData: { success: true, text: "" },
             dataImages: [],
             loading: false,
 

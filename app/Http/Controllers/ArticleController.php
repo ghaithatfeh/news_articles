@@ -48,4 +48,14 @@ class ArticleController extends Controller
 
         return true;
     }
+
+    public function destroy(Article $article)
+    {
+        if ($article->user_id != auth()->id())
+            return abort(403);
+
+        $article->delete();
+
+        return redirect(route('article.index'));
+    }
 }

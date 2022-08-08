@@ -16,10 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', fn () => redirect('/article'));
+Route::redirect('/', '/article');
 
 Route::get('/article', [ArticleController::class, 'index'])->name('article.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/article/create', [ArticleController::class, 'create'])->name('article.create');
+    Route::post('/article', [ArticleController::class, 'store'])->name('article.store');
+
+    Route::delete('/article/{article}', [ArticleController::class, 'destroy'])->name('article.delete');
 });

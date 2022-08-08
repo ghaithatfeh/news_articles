@@ -14,4 +14,8 @@ class Article extends Model
     {
         return $this->hasMany(Block::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
