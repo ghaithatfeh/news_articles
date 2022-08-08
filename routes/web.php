@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::view('/', 'welcome');
-Route::get('/article', [ArticleController::class, 'index'])->name('home');
-Route::resource('article', ArticleController::class);
+Route::get('/', fn () => redirect('/article'));
+
+Route::get('/article', [ArticleController::class, 'index'])->name('article.index');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/article/create', [ArticleController::class, 'create'])->name('article.create');
+});
