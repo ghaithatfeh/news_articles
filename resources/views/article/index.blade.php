@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>Articles</h1>
+        <h1>{{ Request::is('article/my-article') ? 'My' : 'All' }} Articles</h1>
         <a class="btn btn-success" href="{{ route('article.create') }}">Create New Article</a>
     </div>
     @foreach ($articles as $article)

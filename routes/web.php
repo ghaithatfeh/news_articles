@@ -21,6 +21,7 @@ Route::redirect('/', '/article');
 Route::get('/article', [ArticleController::class, 'index'])->name('article.index');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/article/my-article', [ArticleController::class, 'myArticle'])->name('article.my-article');
     Route::get('/article/create', [ArticleController::class, 'create'])->name('article.create');
     Route::post('/article', [ArticleController::class, 'store'])->name('article.store');
 

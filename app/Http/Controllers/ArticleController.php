@@ -18,6 +18,13 @@ class ArticleController extends Controller
             'articles' => $articles
         ]);
     }
+    public function myArticle()
+    {
+        $articles = Article::where('user_id', auth()->id())->paginate(10);
+        return view('article.index', [
+            'articles' => $articles
+        ]);
+    }
 
     public function create()
     {
