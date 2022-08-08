@@ -181,27 +181,28 @@ export default {
         },
         save() {
             const toast = new Toast("#toast");
-            this.editor
-                .save()
-                .then((outputData) => {
-                    axios
-                        .post("/article", {
-                            _token: document.getElementById('csrf-token').content,
-                            title: this.title,
-                            blocks: outputData.blocks,
-                        })
-                        .then((res) => {
-                            this.toastData.success = true;
-                            this.toastData.text = "Article has been created successfuly.";
-                            toast.show();
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            this.toastData.success = false;
-                            this.toastData.text = error.response.data.message;
-                            toast.show();
-                        });
-                })
+            this.editor.save().then((outputData) => {
+                axios
+                    .post("/article", {
+                        _token: document.getElementById("csrf-token").content,
+                        title: this.title,
+                        blocks: outputData.blocks,
+                    })
+                    .then((res) => {
+                        this.title = "";
+                        this.editor.blocks.clear();
+                        this.toastData.success = true;
+                        this.toastData.text =
+                            "Article has been created successfuly.";
+                        toast.show();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.toastData.success = false;
+                        this.toastData.text = error.response.data.message;
+                        toast.show();
+                    });
+            });
         },
     },
     mounted() {

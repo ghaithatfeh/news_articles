@@ -7,20 +7,25 @@ use App\Models\Block;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-use function PHPSTORM_META\type;
-
 class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::paginate(10);
+        $articles = Article::with('user')
+            ->latest()
+            ->paginate(10);
+
         return view('article.index', [
             'articles' => $articles
         ]);
     }
     public function myArticle()
     {
-        $articles = Article::where('user_id', auth()->id())->paginate(10);
+        $articles = Article::with('user')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
         return view('article.index', [
             'articles' => $articles
         ]);
