@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('gifs', function (Blueprint $table) {
             $table->id();
             $table->text('url');
-            $table->foreignId('block_id');
+            $table->foreignId('block_id')->constrained()->cascadeOnDelete();
         });
     }
 

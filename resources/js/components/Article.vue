@@ -1,17 +1,23 @@
 <template>
     <ToastComponent :data="toastData" />
     <div class="container">
+        <h1 class="text-center mb-3" v-if="type === 'view'">{{ title }}</h1>
         <input
-            type="text"
+            v-else
             v-model="title"
+            type="text"
             placeholder="Article Title"
             class="form-control mx-auto my-3"
             style="font-size: 1.2rem; max-width: 650px"
         />
         <div id="editorjs"></div>
         <div class="d-flex my-4">
-            <button class="btn btn-success mx-auto" @click="save">
-                Save Article
+            <button
+                v-show="type !== 'view'"
+                @click="save"
+                class="btn btn-success mx-auto"
+            >
+                {{ type === "edit" ? "Update Article" : "Save Article" }}
             </button>
         </div>
     </div>
@@ -99,6 +105,10 @@ class Gif {
             title: "GIF",
             icon: '<svg width="17" height="15" viewBox="0 0 336 276" xmlns="http://www.w3.org/2000/svg"><path d="M291 150V79c0-19-15-34-34-34H79c-19 0-34 15-34 34v42l67-44 81 72 56-29 42 30zm0 52l-43-30-56 30-81-67-66 39v23c0 19 15 34 34 34h178c17 0 31-13 34-29zM79 0h178c44 0 79 35 79 79v118c0 44-35 79-79 79H79c-44 0-79-35-79-79V79C0 35 35 0 79 0z"/></svg>',
         };
+    }
+
+    static get isReadOnlySupported() {
+        return true;
     }
 
     constructor({ data, api }) {
@@ -189,6 +199,7 @@ export default {
                         blocks: outputData.blocks,
                     })
                     .then((res) => {
+                        console.log(res);
                         this.title = "";
                         this.editor.blocks.clear();
                         this.toastData.success = true;
@@ -204,9 +215,32 @@ export default {
                     });
             });
         },
+        loadOldData() {
+            if (!this.article) return;
+            this.title = this.article.title;
+            this.blocks_data = this.article.blocks.map((block) => {
+                const result = { type: block.type };
+                if (result.type === "paragraph")
+                    result.data = { text: block.value };
+                else
+                    result.data = block.gifs.map((gif) => {
+                        return {
+                            gif_url: gif.url,
+                        };
+                    });
+
+                return result;
+            });
+        },
     },
     mounted() {
         this.getData();
+        this.loadOldData();
+        console.log(this.type);
+    },
+    props: {
+        article: Object,
+        type: String,
     },
     data() {
         return {
@@ -216,38 +250,20 @@ export default {
             toastData: { success: true, text: "" },
             dataImages: [],
             loading: false,
-
+            blocks_data: [],
             editor: new EditorJS({
                 tools: {
                     gif: {
                         class: Gif,
                     },
                 },
-                // data: {
-                //     time: 1552744582955,
-                //     blocks: [
-                //         {
-                //             type: "gif",
-                //             data: [
-                //                 {
-                //                     gif_url: "https://unsplash.it/200?1",
-                //                 },
-                //                 {
-                //                     gif_url: "https://unsplash.it/200?3",
-                //                 },
-                //             ],
-                //         },
-                //         {
-                //             type: "gif",
-                //             data: [
-                //                 {
-                //                     gif_url: "https://unsplash.it/200?2",
-                //                 },
-                //             ],
-                //         },
-                //     ],
-                //     version: "2.11.10",
-                // },
+                onReady: () => {
+                    if (this.blocks_data.length)
+                        this.editor.blocks.render({
+                            blocks: this.blocks_data,
+                        });
+                },
+                readOnly: this.type == "view",
             }),
         };
     },

@@ -19,7 +19,7 @@
 
 </head>
 
-<body>
+<body class="pb-5" style="min-height: 100vh; position: relative">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -87,12 +87,13 @@
         <main class="container py-4">
             @yield('content')
         </main>
-
-        <footer class="shadow py-3 border-top bg-white">
-            <h6 class="text-center text-muted mt-1">&copy; {{ date('Y') }} <a href="https://ghaith-atfeh.tech/"
-                    target="_blank">Ghaith Atfeh</a></h6>
-        </footer>
     </div>
+
+    <footer class="shadow py-3 border-top bg-white position-absolute bottom-0 w-100">
+        <h6 class="text-center text-muted mt-1">&copy; {{ date('Y') }} <a href="https://ghaith-atfeh.tech/"
+                target="_blank">Ghaith Atfeh</a></h6>
+    </footer>
+
     @yield('script')
 </body>
 

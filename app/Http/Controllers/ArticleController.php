@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Block;
+use App\Models\Gif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -36,6 +37,28 @@ class ArticleController extends Controller
         return view('article.create');
     }
 
+    public function edit($slug)
+    {
+        $article = Article::where('slug', $slug)->with('blocks', 'blocks.gifs')->first();
+
+        if (!$article) return abort(404);
+
+        return view('article.edit', [
+            'article' => $article
+        ]);
+    }
+
+    public function show($slug)
+    {
+        $article = Article::where('slug', $slug)->with('blocks', 'blocks.gifs')->first();
+
+        if (!$article) return abort(404);
+
+        return view('article.view', [
+            'article' => $article
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -45,19 +68,26 @@ class ArticleController extends Controller
 
         $article = Article::create([
             'title' => $request->title,
-            'slug' => Str::slug($request->title),
             'user_id' => auth()->id()
         ]);
 
         foreach ($request->blocks as $block) {
-            $blocks_data[] = [
+            $block_data = [
                 'type' => $block['type'],
-                'value' => $block['data']['text'],
                 'article_id' => $article['id'],
             ];
-        }
-        Block::insert($blocks_data);
+            if (isset($block['data']['text']))
+                $block_data['value'] = $block['data']['text'];
 
+            $block_model = Block::create($block_data);
+
+            if (isset($block['data']['urls'])) {
+                foreach ($block['data']['urls'] as $gif_url)
+                    $gifs_data[] = ['url' => $gif_url, 'block_id' => $block_model->id];
+
+                Gif::insert($gifs_data);
+            }
+        }
         return true;
     }
 
@@ -68,6 +98,6 @@ class ArticleController extends Controller
 
         $article->delete();
 
-        return redirect(route('article.index'));
+        return redirect()->route('article.index');
     }
 }

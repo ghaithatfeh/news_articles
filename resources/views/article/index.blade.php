@@ -9,17 +9,18 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <h3 class="card-title">{{ $article->title }}</h3>
-                    @if (auth()->id() == $article->user_id)
-                        <div class="actions">
-                            <a class="mx-2" href="">Edit</a>
-                            <a class="mx-2" href="" onclick="deleteArticle(event)">Delete</a>
-                            <form id="delete-form" method="POST"
-                                action="{{ route('article.delete', ['article' => $article->id]) }}">
+                    <div class="actions">
+                        <a class="mx-2" href="{{ route('article.show', ['article' => $article]) }}">View</a>
+                        @if (auth()->id() == $article->user_id)
+                            <a class="mx-2" href="{{ route('article.edit', ['article' => $article->slug]) }}">Edit</a>
+                            <a class="mx-2" href="#" onclick="deleteArticle(event, {{ $article->id }})">Delete</a>
+                            <form id="delete-form-{{ $article->id }}" method="POST"
+                                action="{{ route('article.destroy', ['article' => $article->slug]) }}">
                                 @csrf
                                 @method('DELETE')
                             </form>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
                 @foreach ($article->blocks->take(2) as $block)
                     <p>{!! $block->value !!}</p>
@@ -36,10 +37,10 @@
 
 @section('script')
     <script>
-        function deleteArticle(e) {
+        function deleteArticle(e, formId) {
             e.preventDefault()
             if (confirm('Are you sure you want to delete this article?'))
-                document.getElementById('delete-form').submit()
+                document.getElementById('delete-form-' + formId).submit()
         }
     </script>
 @endsection

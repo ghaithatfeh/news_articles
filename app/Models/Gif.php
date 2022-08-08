@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Gif extends Model
 {
     use HasFactory;
+    protected $fillable = ['url', 'block_id'];
+    public $timestamps = false;
 }

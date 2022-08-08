@@ -18,7 +18,7 @@ app.get('/api/gifs', (request, response) => {
             params: {
                 q: request.query.q,
                 key: apiKey2,
-                limit: 12,
+                limit: 20,
                 media_filter: 'gif,tinygif'
             }
         })
