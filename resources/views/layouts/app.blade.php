@@ -87,6 +87,11 @@
         <main class="container py-4">
             @yield('content')
         </main>
+
+        <footer class="shadow py-3 border-top bg-white">
+            <h6 class="text-center text-muted mt-1">&copy; {{ date('Y') }} <a href="https://ghaith-atfeh.tech/"
+                    target="_blank">Ghaith Atfeh</a></h6>
+        </footer>
     </div>
     @yield('script')
 </body>
