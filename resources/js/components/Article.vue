@@ -1,4 +1,5 @@
 <template>
+    <ToastComponent :data="toastData" />
     <div class="container">
         <input
             type="text"
@@ -85,8 +86,9 @@
 
 <script>
 import EditorJS from "@editorjs/editorjs";
-import { Modal } from "bootstrap";
+import { Modal, Toast } from "bootstrap";
 import ImagesSelector from "./ImagesSelector.vue";
+import ToastComponent from "./ToastComponent.vue";
 import axios from "axios";
 
 let selectedImages = null;
@@ -154,7 +156,7 @@ class Gif {
 }
 
 export default {
-    components: { ImagesSelector },
+    components: { ImagesSelector, ToastComponent },
     methods: {
         async getData(query = "") {
             this.loading = true;
@@ -178,6 +180,7 @@ export default {
             this.dataImages.map((i) => (i.selected = false));
         },
         save() {
+            const toast = new Toast("#toast");
             this.editor
                 .save()
                 .then((outputData) => {
@@ -186,12 +189,18 @@ export default {
                             title: this.title,
                             blocks: outputData.blocks,
                         })
-                        .then((res) => console.log(res.data))
-                        .catch((error) => console.log(error.response.data));
+                        .then((res) => {
+                            this.toastData.success = true;
+                            this.toastData.text =
+                                "Article has been created successfuly.";
+                            toast.show();
+                        })
+                        .catch((error) => {
+                            this.toastData.success = false;
+                            this.toastData.text = error.response.data.message;
+                            toast.show();
+                        });
                 })
-                .catch((error) => {
-                    console.log("Saving failed: ", error.message);
-                });
         },
     },
     mounted() {
@@ -202,6 +211,7 @@ export default {
             title: "",
             savedData: "",
             searchText: "",
+            toastData: { success: false, text: "" },
             dataImages: [],
             loading: false,
 

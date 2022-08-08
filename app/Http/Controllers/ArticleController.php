@@ -40,7 +40,7 @@ class ArticleController extends Controller
         foreach ($request->blocks as $block) {
             $blocks_data[] = [
                 'type' => $block['type'],
-                'value' => $block['data']['urls'],
+                'value' => $block['data']['text'],
                 'article_id' => $article['id'],
             ];
         }

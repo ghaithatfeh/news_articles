@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
     @if ($errors->any())
         <div class="d-flex justify-content-center">
             <div class="alert alert-danger">
