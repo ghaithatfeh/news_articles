@@ -37,13 +37,14 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js
 
 ```
     composer install
+    npm install
     php artisan migrate
 ```
 
 -   Run this commands in separate terminals:
 
 ```
-    php artisan serve
+    php artisan servex
     node gif_provider/app.js
 ```
 
