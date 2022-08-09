@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('content')
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center border-bottom">
         <h1>{{ Request::is('article/my-article') ? 'My' : 'All' }} Articles</h1>
         <a class="btn btn-success" href="{{ route('article.create') }}">Create New Article</a>
     </div>
-    @foreach ($articles as $article)
+    @forelse ($articles as $article)
         <div class="card my-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -31,7 +31,9 @@
                 </p>
             </div>
         </div>
-    @endforeach
+    @empty
+        <h5 class="mt-5 pt-5 text-center text-danger fst-italic">No articles yet.</h5>
+    @endforelse
     {{ $articles->links() }}
 @endsection
 

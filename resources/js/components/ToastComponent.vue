@@ -3,15 +3,12 @@
         <div
             id="toast"
             class="toast align-items-center border-0"
-            :class="{ 'text-bg-success': data.success , 'text-bg-danger': !data.success}"
             role="alert"
             aria-live="assertive"
             aria-atomic="true"
         >
             <div class="d-flex">
-                <div class="toast-body">
-                    {{ data.text }}
-                </div>
+                <div class="toast-body" v-html="data.text"></div>
                 <button
                     type="button"
                     class="btn-close me-2 m-auto"
@@ -24,10 +21,30 @@
 </template>
 
 <script>
+import { Toast } from "bootstrap";
+
 export default {
     name: "ToastComponent",
     props: {
         data: Object,
+    },
+    data() {
+        return {
+            toast: undefined,
+            toastEl: undefined,
+        };
+    },
+    mounted() {
+        this.toastEl = document.getElementById("toast");
+        this.toast = new Toast(this.toastEl);
+    },
+    methods: {
+        show() {
+            this.toast.show();
+            this.toastEl.classList.add(
+                this.data.success ? "text-bg-success" : "text-bg-danger"
+            );
+        },
     },
 };
 </script>

@@ -6,18 +6,15 @@ const axios = require('axios');
 
 app.use(cors());
 
-const gifProviderUrl = 'https://api.giphy.com/v1/gifs/search'
-const apiKey = 'MG3zYrqJDdYXUENiamJoW1avccqpBofw'
-
-const gifProviderUrl2 = 'https://g.tenor.com/v1/search'
-const apiKey2 = 'LIVDSRZULELA'
+const gifProviderUrl = 'https://g.tenor.com/v1/search'
+const apiKey = 'LIVDSRZULELA'
 
 app.get('/api/gifs', (request, response) => {
     axios
-        .get(gifProviderUrl2, {
+        .get(gifProviderUrl, {
             params: {
                 q: request.query.q,
-                key: apiKey2,
+                key: apiKey,
                 limit: 20,
                 media_filter: 'gif,tinygif'
             }

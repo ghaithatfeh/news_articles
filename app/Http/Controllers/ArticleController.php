@@ -70,8 +70,34 @@ class ArticleController extends Controller
             'title' => $request->title,
             'user_id' => auth()->id()
         ]);
+        $this->createBlocks($request->blocks, $article);
 
-        foreach ($request->blocks as $block) {
+        return true;
+    }
+
+    public function update(Article $article, Request $request)
+    {
+        if ($article->user_id != auth()->id())
+            return abort(403);
+
+        $request->validate([
+            'title' => 'required|min:3|max:150',
+            'blocks' => 'required'
+        ]);
+
+        $article->slug = null;
+        $article->update([
+            'title' => $request->title,
+        ]);
+        $article->blocks()->delete();
+        $this->createBlocks($request->blocks, $article);
+
+        return true;
+    }
+
+    public function createBlocks($blocks, $article)
+    {
+        foreach ($blocks as $block) {
             $block_data = [
                 'type' => $block['type'],
                 'article_id' => $article['id'],
@@ -88,7 +114,6 @@ class ArticleController extends Controller
                 Gif::insert($gifs_data);
             }
         }
-        return true;
     }
 
     public function destroy(Article $article)

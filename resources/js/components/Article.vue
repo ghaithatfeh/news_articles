@@ -1,5 +1,5 @@
 <template>
-    <ToastComponent :data="toastData" />
+    <ToastComponent :data="toastData" ref="toast" />
     <div class="container">
         <h1 class="text-center mb-3" v-if="type === 'view'">{{ title }}</h1>
         <input
@@ -14,7 +14,7 @@
         <div class="d-flex my-4">
             <button
                 v-show="type !== 'view'"
-                @click="save"
+                @click="submit"
                 class="btn btn-success mx-auto"
             >
                 {{ type === "edit" ? "Update Article" : "Save Article" }}
@@ -92,7 +92,7 @@
 
 <script>
 import EditorJS from "@editorjs/editorjs";
-import { Modal, Toast } from "bootstrap";
+import { Modal } from "bootstrap";
 import ImagesSelector from "./ImagesSelector.vue";
 import ToastComponent from "./ToastComponent.vue";
 import axios from "axios";
@@ -164,6 +164,7 @@ class Gif {
         return false;
     }
 }
+const toast = undefined;
 
 export default {
     components: { ImagesSelector, ToastComponent },
@@ -189,31 +190,61 @@ export default {
         insert() {
             this.dataImages.map((i) => (i.selected = false));
         },
-        save() {
-            const toast = new Toast("#toast");
+        submit() {
             this.editor.save().then((outputData) => {
-                axios
-                    .post("/article", {
-                        _token: document.getElementById("csrf-token").content,
-                        title: this.title,
-                        blocks: outputData.blocks,
-                    })
-                    .then((res) => {
-                        console.log(res);
-                        this.title = "";
-                        this.editor.blocks.clear();
-                        this.toastData.success = true;
-                        this.toastData.text =
-                            "Article has been created successfuly.";
-                        toast.show();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.toastData.success = false;
-                        this.toastData.text = error.response.data.message;
-                        toast.show();
-                    });
+                if (!this.validate(outputData.blocks)) return;
+                if (this.type === "create") this.save(outputData.blocks);
+                else if (this.type === "edit") this.update(outputData.blocks);
             });
+        },
+        validate(blocks) {
+            if (blocks.length && this.title.length > 3) return true;
+            this.toastData.success = false;
+            this.toastData.text = `Article title is required and must be more than 3 character.
+            <br> Article content can not be empty.`;
+            this.$refs.toast.show();
+        },
+        save(blocks) {
+            axios
+                .post("/article", {
+                    _token: document.getElementById("csrf-token").content,
+                    title: this.title,
+                    blocks: blocks,
+                })
+                .then((res) => {
+                    this.title = "";
+                    this.editor.blocks.clear();
+                    this.toastData.success = true;
+                    this.toastData.text =
+                        "Article has been created successfuly.";
+                    this.$refs.toast.show();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.toastData.success = false;
+                    this.toastData.text = error.response.data.message;
+                    this.$refs.toast.show();
+                });
+        },
+        update(blocks) {
+            axios
+                .put(`/article/${this.article.slug}`, {
+                    _token: document.getElementById("csrf-token").content,
+                    title: this.title,
+                    blocks: blocks,
+                })
+                .then((res) => {
+                    this.toastData.success = true;
+                    this.toastData.text =
+                        "Article has been updated successfuly.";
+                    this.$refs.toast.show();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.toastData.success = false;
+                    this.toastData.text = error.response.data.message;
+                    this.$refs.toast.show();
+                });
         },
         loadOldData() {
             if (!this.article) return;
@@ -228,7 +259,6 @@ export default {
                             gif_url: gif.url,
                         };
                     });
-
                 return result;
             });
         },
@@ -236,7 +266,6 @@ export default {
     mounted() {
         this.getData();
         this.loadOldData();
-        console.log(this.type);
     },
     props: {
         article: Object,

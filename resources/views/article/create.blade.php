@@ -1,4 +1,4 @@
 @extends('layouts.app')
 @section('content')
-    <article-component></article-component>
+    <article-component :type="'create'"></article-component>
 @endsection
