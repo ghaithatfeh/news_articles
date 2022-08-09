@@ -41,6 +41,7 @@ export default {
     methods: {
         show() {
             this.toast.show();
+            this.toastEl.classList.remove("text-bg-success", "text-bg-danger");
             this.toastEl.classList.add(
                 this.data.success ? "text-bg-success" : "text-bg-danger"
             );
