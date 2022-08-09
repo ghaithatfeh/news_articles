@@ -30,7 +30,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js
 -   Go to project directory:
 
 ```
-    cd news_article
+    cd news_articles
 ```
 
 -   Run the following commands:
