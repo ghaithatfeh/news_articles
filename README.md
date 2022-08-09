@@ -24,7 +24,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js
 -   Clone project into your device:
 
 ```
-    git clone https://github.com/omer73364/lazy-load-list.git
+    git clone https://github.com/ghaithatfeh/news_articles.git
 ```
 
 -   Go to project directory:
