@@ -1,7 +1,7 @@
 # News Article
 
 Web application for creating news articles that include styleable text and GIFs.
-The following tools were used: Laravel, Vue.js, Node.js, Express.js
+The following tools were used: Laravel, Vue.js, Node.js, Express.js, Bootstrap
 
 ## Features
 
@@ -13,6 +13,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js
 -   Editer.js plugin for inserting multible gifs in an article content.
 -   Search for gifs.
 -   Node.js API to provide gifs.
+-   Responsive design for all device sizes.
 
 ## Setup
 
@@ -44,7 +45,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js
 -   Run this commands in separate terminals:
 
 ```
-    php artisan servex
+    php artisan serve
     node gif_provider/app.js
 ```
 
