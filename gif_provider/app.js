@@ -27,7 +27,11 @@ app.get('/api/gifs', (request, response) => {
                     gif_url: item.media[0].gif.url,
                 }
             })
-            response.send(gifs)
+            response.send({
+                status: true,
+                message: "success",
+                gifs: gifs
+            })
         })
         .catch(error => {
             response.send(error.message)
@@ -35,4 +39,6 @@ app.get('/api/gifs', (request, response) => {
 })
 
 const port = 3000
-app.listen(port)
+app.listen(port, () => {
+    console.log(`Server running at http://127.0.0.1:${port}/`);
+})

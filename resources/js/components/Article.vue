@@ -177,7 +177,7 @@ export default {
                     params: { q: query },
                 })
                 .then((res) => {
-                    this.dataImages = res.data;
+                    this.dataImages = res.status && res.data.gifs;
                     this.loading = false;
                 })
                 .catch((error) => {
