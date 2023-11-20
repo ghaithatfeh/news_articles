@@ -37,7 +37,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js, Bootstrap
 -   Run the following commands:
 
 ```
-    composer install
+    composer update
     npm install
     php artisan migrate
 ```
