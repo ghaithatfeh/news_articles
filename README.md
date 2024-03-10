@@ -42,7 +42,7 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js, Bootstrap
     php artisan migrate
 ```
 
--   Run this commands in separate terminals:
+-   Run the following commands in separate terminals:
 
 ```
     php artisan serve
