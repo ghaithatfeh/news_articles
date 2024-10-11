@@ -10,9 +10,9 @@ The following tools were used: Laravel, Vue.js, Node.js, Express.js, Bootstrap
 -   Display user's articles for auth users.
 -   Articles URLs with a slug to be SEO friendly.
 -   Create, edit, and delete articles for auth users.
--   Editer.js plugin for inserting multiple gifs in an article content.
--   Search for gifs.
--   Node.js API to provide gifs.
+-   Editer.js plugin for inserting multiple GIFs in an article content.
+-   Node.js API integrated with GIPHY to provide GIFs allowing the client side to make searching and filteration.
+-   Live and fast search for GIFs on the client side.
 -   Responsive design for all device sizes.
 
 ## Setup
